@@ -14,7 +14,7 @@ class RoleSeeder extends Seeder
             ['tenant_id' => null, 'code' => 'TENANT_ADMIN'],
             [
                 'name' => 'Administrador do Tenant',
-                'description' => 'Perfil administrativo padrão do tenant.',
+                'description' => 'Perfil administrativo padrao do tenant.',
                 'is_system_role' => true,
             ],
         );
@@ -35,6 +35,12 @@ class RoleSeeder extends Seeder
             'users.deactivate',
             'organizations.view',
             'organizations.update',
+            'territories.view',
+            'territories.create',
+            'territories.update',
+            'territorial_units.view',
+            'territorial_units.create',
+            'territorial_units.update',
             'audit.view',
         ];
 
@@ -42,6 +48,8 @@ class RoleSeeder extends Seeder
             'audit.view',
             'users.view',
             'organizations.view',
+            'territories.view',
+            'territorial_units.view',
         ];
 
         $tenantAdminRole->permissions()->sync(

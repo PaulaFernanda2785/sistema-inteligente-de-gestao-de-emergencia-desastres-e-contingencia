@@ -7,6 +7,10 @@ use App\Modules\Admin\Models\Organization;
 use App\Modules\Admin\Models\User;
 use App\Modules\Admin\Policies\OrganizationPolicy;
 use App\Modules\Admin\Policies\UserPolicy;
+use App\Modules\Territory\Models\TerritorialUnit;
+use App\Modules\Territory\Models\Territory;
+use App\Modules\Territory\Policies\TerritorialUnitPolicy;
+use App\Modules\Territory\Policies\TerritoryPolicy;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 
@@ -27,6 +31,8 @@ class AppServiceProvider extends ServiceProvider
     {
         Gate::policy(User::class, UserPolicy::class);
         Gate::policy(Organization::class, OrganizationPolicy::class);
+        Gate::policy(Territory::class, TerritoryPolicy::class);
+        Gate::policy(TerritorialUnit::class, TerritorialUnitPolicy::class);
 
         Gate::before(function (User $user): bool|null {
             $user->loadMissing('tenant');

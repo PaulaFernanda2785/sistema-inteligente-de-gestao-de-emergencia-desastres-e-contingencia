@@ -11,6 +11,7 @@ use App\Modules\Admin\Requests\UpdateUserRequest;
 use App\Modules\Admin\Services\UserManagementService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class UserController extends Controller
 {
@@ -21,18 +22,25 @@ class UserController extends Controller
     ) {
     }
 
-    public function index(Request $request): JsonResponse
+    public function index(Request $request): JsonResponse|View
     {
         $this->authorize('viewAny', User::class);
 
         $tenantId = $this->tenantContext->tenantId();
-        abort_if($tenantId === null, 403, 'Tenant não resolvido.');
+        abort_if($tenantId === null, 403, 'Tenant nao resolvido.');
 
         $users = $this->repository->paginateByFilters(
             tenantId: $tenantId,
             filters: $request->only(['name', 'email', 'status']),
             perPage: (int) $request->integer('per_page', 15),
         );
+
+        if (!$request->expectsJson()) {
+            return view('admin.users.index', [
+                'users' => $users,
+                'filters' => $request->only(['name', 'email', 'status']),
+            ]);
+        }
 
         return response()->json($users);
     }
@@ -42,7 +50,7 @@ class UserController extends Controller
         $createdUser = $this->service->create($request->validated());
 
         return response()->json([
-            'message' => 'Usuário cadastrado com sucesso.',
+            'message' => 'Usuario cadastrado com sucesso.',
             'data' => $createdUser,
         ], 201);
     }
@@ -58,7 +66,7 @@ class UserController extends Controller
         $updatedUser = $this->service->update($target->id, $request->validated());
 
         return response()->json([
-            'message' => 'Usuário atualizado com sucesso.',
+            'message' => 'Usuario atualizado com sucesso.',
             'data' => $updatedUser,
         ]);
     }
@@ -74,7 +82,7 @@ class UserController extends Controller
         $deactivatedUser = $this->service->deactivate($target->id, (int) $request->user()->id);
 
         return response()->json([
-            'message' => 'Usuário inativado com sucesso.',
+            'message' => 'Usuario inativado com sucesso.',
             'data' => $deactivatedUser,
         ]);
     }

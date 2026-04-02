@@ -13,6 +13,8 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
+        $middleware->redirectUsersTo('/admin/users');
+
         $middleware->alias([
             'tenant.context' => SetTenantContext::class,
             'idempotency' => EnsureIdempotentSubmission::class,
