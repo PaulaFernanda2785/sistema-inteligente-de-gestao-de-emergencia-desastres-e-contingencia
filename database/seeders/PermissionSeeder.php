@@ -22,6 +22,10 @@ class PermissionSeeder extends Seeder
             ['code' => 'territorial_units.view', 'name' => 'Visualizar unidades territoriais', 'module' => 'territory.units', 'action' => 'view'],
             ['code' => 'territorial_units.create', 'name' => 'Criar unidades territoriais', 'module' => 'territory.units', 'action' => 'create'],
             ['code' => 'territorial_units.update', 'name' => 'Atualizar unidades territoriais', 'module' => 'territory.units', 'action' => 'update'],
+            ['code' => 'risk_areas.view', 'name' => 'Visualizar areas de risco', 'module' => 'risk.areas', 'action' => 'view'],
+            ['code' => 'risk_areas.create', 'name' => 'Criar areas de risco', 'module' => 'risk.areas', 'action' => 'create'],
+            ['code' => 'risk_areas.update', 'name' => 'Atualizar areas de risco', 'module' => 'risk.areas', 'action' => 'update'],
+            ['code' => 'risk_areas.deactivate', 'name' => 'Inativar areas de risco', 'module' => 'risk.areas', 'action' => 'deactivate'],
             ['code' => 'audit.view', 'name' => 'Visualizar auditoria', 'module' => 'audit', 'action' => 'view'],
         ];
 

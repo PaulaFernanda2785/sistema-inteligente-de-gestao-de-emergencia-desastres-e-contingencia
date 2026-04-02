@@ -41,6 +41,10 @@ class RoleSeeder extends Seeder
             'territorial_units.view',
             'territorial_units.create',
             'territorial_units.update',
+            'risk_areas.view',
+            'risk_areas.create',
+            'risk_areas.update',
+            'risk_areas.deactivate',
             'audit.view',
         ];
 
@@ -50,6 +54,7 @@ class RoleSeeder extends Seeder
             'organizations.view',
             'territories.view',
             'territorial_units.view',
+            'risk_areas.view',
         ];
 
         $tenantAdminRole->permissions()->sync(

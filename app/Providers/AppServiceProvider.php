@@ -7,6 +7,8 @@ use App\Modules\Admin\Models\Organization;
 use App\Modules\Admin\Models\User;
 use App\Modules\Admin\Policies\OrganizationPolicy;
 use App\Modules\Admin\Policies\UserPolicy;
+use App\Modules\Risk\Models\RiskArea;
+use App\Modules\Risk\Policies\RiskAreaPolicy;
 use App\Modules\Territory\Models\TerritorialUnit;
 use App\Modules\Territory\Models\Territory;
 use App\Modules\Territory\Policies\TerritorialUnitPolicy;
@@ -33,6 +35,7 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(Organization::class, OrganizationPolicy::class);
         Gate::policy(Territory::class, TerritoryPolicy::class);
         Gate::policy(TerritorialUnit::class, TerritorialUnitPolicy::class);
+        Gate::policy(RiskArea::class, RiskAreaPolicy::class);
 
         Gate::before(function (User $user): bool|null {
             $user->loadMissing('tenant');
