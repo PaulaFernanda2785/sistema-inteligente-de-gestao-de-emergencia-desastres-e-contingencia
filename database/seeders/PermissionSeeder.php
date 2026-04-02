@@ -26,6 +26,10 @@ class PermissionSeeder extends Seeder
             ['code' => 'risk_areas.create', 'name' => 'Criar areas de risco', 'module' => 'risk.areas', 'action' => 'create'],
             ['code' => 'risk_areas.update', 'name' => 'Atualizar areas de risco', 'module' => 'risk.areas', 'action' => 'update'],
             ['code' => 'risk_areas.deactivate', 'name' => 'Inativar areas de risco', 'module' => 'risk.areas', 'action' => 'deactivate'],
+            ['code' => 'shelters.view', 'name' => 'Visualizar abrigos', 'module' => 'shelter', 'action' => 'view'],
+            ['code' => 'shelters.create', 'name' => 'Criar abrigos', 'module' => 'shelter', 'action' => 'create'],
+            ['code' => 'shelters.update', 'name' => 'Atualizar abrigos', 'module' => 'shelter', 'action' => 'update'],
+            ['code' => 'shelters.deactivate', 'name' => 'Inativar abrigos', 'module' => 'shelter', 'action' => 'deactivate'],
             ['code' => 'audit.view', 'name' => 'Visualizar auditoria', 'module' => 'audit', 'action' => 'view'],
         ];
 
