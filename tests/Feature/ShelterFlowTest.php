@@ -71,7 +71,7 @@ class ShelterFlowTest extends TestCase
             'email' => $adminUser->email,
             'password' => 'SenhaSegura@123',
             '_idempotency_token' => (string) Str::uuid(),
-        ])->assertRedirect(route('admin.users.index'));
+        ])->assertRedirect(route('shelters.index'));
 
         $createResponse = $this->postJson(route('shelters.store'), [
             'territorial_unit_id' => $unit->id,

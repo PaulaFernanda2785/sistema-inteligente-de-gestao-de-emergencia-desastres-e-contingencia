@@ -71,7 +71,7 @@ class RiskAreaFlowTest extends TestCase
             'password' => 'SenhaSegura@123',
             '_idempotency_token' => (string) Str::uuid(),
         ]);
-        $loginResponse->assertRedirect(route('admin.users.index'));
+        $loginResponse->assertRedirect(route('shelters.index'));
 
         $createResponse = $this->postJson(route('risk.areas.store'), [
             'territorial_unit_id' => $unit->id,

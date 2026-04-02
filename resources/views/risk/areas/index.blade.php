@@ -1,61 +1,14 @@
-<!doctype html>
-<html lang="pt-BR">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Areas de risco | SIGEDC</title>
-    <style>
-        :root {
-            --bg: #f3f6fb;
-            --card: #ffffff;
-            --text: #1f2937;
-            --muted: #6b7280;
-            --primary: #0f4c81;
-            --border: #dbe3ee;
-        }
-        * { box-sizing: border-box; }
-        body { margin: 0; font-family: "Segoe UI", Tahoma, sans-serif; background: var(--bg); color: var(--text); }
-        .container { max-width: 1180px; margin: 28px auto; padding: 0 16px; }
-        .topbar { display: flex; flex-wrap: wrap; gap: 10px; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-        .title { margin: 0; font-size: 24px; }
-        .actions { display: flex; gap: 8px; }
-        .btn { border: 0; border-radius: 8px; padding: 10px 14px; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-block; }
-        .btn-primary { background: var(--primary); color: #fff; }
-        .btn-soft { background: #eaf0fb; color: #1d4ed8; }
-        .btn-danger { background: #fee2e2; color: #991b1b; }
-        .card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; box-shadow: 0 8px 24px rgba(15, 23, 42, .05); margin-top: 12px; }
-        .card-body { padding: 14px; }
-        .grid { display: grid; gap: 10px; grid-template-columns: repeat(4, minmax(0, 1fr)); }
-        .grid-2 { display: grid; gap: 10px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
-        .field label { display: block; margin-bottom: 6px; font-size: 13px; color: var(--muted); }
-        .field input, .field select, .field textarea { width: 100%; border: 1px solid var(--border); border-radius: 8px; padding: 10px; }
-        table { width: 100%; border-collapse: collapse; }
-        th, td { text-align: left; padding: 10px 8px; border-bottom: 1px solid var(--border); font-size: 14px; white-space: nowrap; }
-        th { font-size: 12px; text-transform: uppercase; color: var(--muted); letter-spacing: .04em; }
-        .tag { border-radius: 999px; padding: 4px 8px; font-size: 12px; font-weight: 600; }
-        .tag.ativo { background: #dcfce7; color: #166534; }
-        .tag.inativo { background: #fee2e2; color: #991b1b; }
-        .feedback-ok { margin-top: 8px; color: #166534; }
-        .feedback-err { margin-top: 8px; color: #991b1b; }
-        .table-wrap { overflow-x: auto; }
-        .inline-form { display: inline; }
-        .pagination { display: flex; justify-content: space-between; align-items: center; padding-top: 12px; color: var(--muted); font-size: 14px; }
-        .pagination a { color: #1d4ed8; text-decoration: none; }
-        @media (max-width: 920px) {
-            .grid, .grid-2 { grid-template-columns: 1fr; }
-        }
-    </style>
-</head>
-<body>
-<main class="container">
-    <section class="topbar">
-        <h1 class="title">Base Territorial - Areas de risco</h1>
-        <div class="actions">
-            <a class="btn btn-soft" href="{{ route('territory.territories.index') }}">Territorios</a>
-            <a class="btn btn-soft" href="{{ route('territory.units.index') }}">Unidades</a>
-        </div>
-    </section>
+@extends('layouts.app')
 
+@section('title', 'Areas de risco')
+@section('page_title', 'Base Territorial - Areas de risco')
+
+@section('page_actions')
+    <a class="btn btn-soft" href="{{ route('territory.territories.index') }}">Territorios</a>
+    <a class="btn btn-soft" href="{{ route('territory.units.index') }}">Unidades</a>
+@endsection
+
+@section('content')
     @if (session('success'))
         <div class="feedback-ok">{{ session('success') }}</div>
     @endif
@@ -279,7 +232,7 @@
                                     @csrf
                                     @method('PATCH')
                                     <input type="hidden" name="_idempotency_token" value="{{ (string) \Illuminate\Support\Str::uuid() }}">
-                                    <button type="submit" class="btn btn-danger" style="padding:4px 8px;">Inativar</button>
+                                    <button type="submit" class="btn btn-danger">Inativar</button>
                                 </form>
                             @endif
                         </td>
@@ -312,6 +265,4 @@
             </div>
         </div>
     </section>
-</main>
-</body>
-</html>
+@endsection

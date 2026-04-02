@@ -71,7 +71,7 @@ class AuthAndUserFlowTest extends TestCase
             '_idempotency_token' => (string) Str::uuid(),
         ]);
 
-        $loginResponse->assertRedirect(route('admin.users.index'));
+        $loginResponse->assertRedirect(route('shelters.index'));
         $this->assertAuthenticatedAs($adminUser);
 
         $listResponse = $this->getJson(route('admin.users.index'));

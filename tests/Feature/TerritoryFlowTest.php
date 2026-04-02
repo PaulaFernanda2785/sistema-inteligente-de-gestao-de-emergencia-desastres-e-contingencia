@@ -70,7 +70,7 @@ class TerritoryFlowTest extends TestCase
             'password' => 'SenhaSegura@123',
             '_idempotency_token' => (string) Str::uuid(),
         ]);
-        $loginResponse->assertRedirect(route('admin.users.index'));
+        $loginResponse->assertRedirect(route('shelters.index'));
 
         $territoryCreate = $this->postJson(route('territory.territories.store'), [
             'name' => 'Fortaleza',

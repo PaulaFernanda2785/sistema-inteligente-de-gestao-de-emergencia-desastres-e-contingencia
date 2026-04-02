@@ -85,6 +85,6 @@ class LoginController extends Controller
             entityId: $user->id,
         );
 
-        return redirect()->route('admin.users.index');
+        return redirect()->route('shelters.index');
     }
 }
