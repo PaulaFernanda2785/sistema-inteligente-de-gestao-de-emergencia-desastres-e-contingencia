@@ -2,6 +2,7 @@
 
 namespace App\Modules\Admin\Models;
 
+use App\Core\Tenancy\Concerns\BelongsToTenant;
 use App\Modules\Tenancy\Models\Tenant;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -12,6 +13,7 @@ use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
+    use BelongsToTenant;
     use HasFactory;
     use Notifiable;
     use SoftDeletes;
@@ -46,6 +48,11 @@ class User extends Authenticatable
     public function getAuthPassword(): string
     {
         return (string) $this->password_hash;
+    }
+
+    public function getAuthPasswordName(): string
+    {
+        return 'password_hash';
     }
 
     public function tenant(): BelongsTo

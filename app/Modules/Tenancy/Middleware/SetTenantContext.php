@@ -16,14 +16,21 @@ class SetTenantContext
 
     public function handle(Request $request, Closure $next): Response
     {
+        $this->tenantContext->clear();
+
         $user = $request->user();
+        $user?->loadMissing('tenant');
 
         if ($user === null || $user->tenant === null || !$user->tenant->is_active) {
-            abort(Response::HTTP_FORBIDDEN, 'Tenant inválido ou inativo.');
+            abort(Response::HTTP_FORBIDDEN, 'Tenant invalido ou inativo.');
         }
 
         $this->tenantContext->setTenant($user->tenant);
 
-        return $next($request);
+        try {
+            return $next($request);
+        } finally {
+            $this->tenantContext->clear();
+        }
     }
 }

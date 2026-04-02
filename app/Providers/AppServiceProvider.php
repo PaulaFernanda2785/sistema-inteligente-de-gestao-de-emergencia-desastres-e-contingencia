@@ -27,5 +27,19 @@ class AppServiceProvider extends ServiceProvider
     {
         Gate::policy(User::class, UserPolicy::class);
         Gate::policy(Organization::class, OrganizationPolicy::class);
+
+        Gate::before(function (User $user): bool|null {
+            $user->loadMissing('tenant');
+
+            if ($user->status !== 'ATIVO') {
+                return false;
+            }
+
+            if ($user->tenant === null || !$user->tenant->is_active) {
+                return false;
+            }
+
+            return null;
+        });
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Modules\Admin\Models;
 
+use App\Core\Tenancy\Concerns\BelongsToTenant;
 use App\Modules\Tenancy\Models\Tenant;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -9,6 +10,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Organization extends Model
 {
+    use BelongsToTenant;
+
     protected $table = 'organizations';
 
     protected $fillable = [
