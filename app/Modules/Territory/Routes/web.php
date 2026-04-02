@@ -1,5 +1,6 @@
 <?php
 
+use App\Modules\Territory\Controllers\BairroController;
 use App\Modules\Territory\Controllers\TerritorialUnitController;
 use App\Modules\Territory\Controllers\TerritoryController;
 use Illuminate\Support\Facades\Route;
@@ -10,6 +11,10 @@ Route::prefix('territory')->name('territory.')->group(function (): void {
         ->middleware('idempotency');
 
     Route::resource('units', TerritorialUnitController::class)
+        ->except(['show', 'destroy'])
+        ->middleware('idempotency');
+
+    Route::resource('bairros', BairroController::class)
         ->except(['show', 'destroy'])
         ->middleware('idempotency');
 });

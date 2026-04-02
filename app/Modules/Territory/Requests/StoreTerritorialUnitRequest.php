@@ -26,6 +26,22 @@ class StoreTerritorialUnitRequest extends FormRequest
                     fn ($query) => $query->where('tenant_id', $tenantId),
                 ),
             ],
+            'municipio_id' => [
+                'required',
+                'integer',
+                Rule::exists('municipios', 'id')->where(
+                    fn ($query) => $query->where('ativo', true),
+                ),
+            ],
+            'bairro_id' => [
+                'nullable',
+                'integer',
+                Rule::exists('bairros', 'id')->where(
+                    fn ($query) => $query
+                        ->where('ativo', true)
+                        ->where('municipio_id', (int) $this->input('municipio_id')),
+                ),
+            ],
             'parent_unit_id' => [
                 'nullable',
                 'integer',

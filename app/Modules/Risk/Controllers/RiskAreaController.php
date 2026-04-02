@@ -9,6 +9,8 @@ use App\Modules\Risk\Repositories\RiskAreaRepository;
 use App\Modules\Risk\Requests\StoreRiskAreaRequest;
 use App\Modules\Risk\Requests\UpdateRiskAreaRequest;
 use App\Modules\Risk\Services\RiskAreaService;
+use App\Modules\Territory\Models\Bairro;
+use App\Modules\Territory\Models\Municipio;
 use App\Modules\Territory\Models\TerritorialUnit;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -29,7 +31,7 @@ class RiskAreaController extends Controller
         $this->authorize('viewAny', RiskArea::class);
 
         $tenantId = $this->resolveTenantIdOrAbort();
-        $filters = $request->only(['territorial_unit_id', 'risk_type', 'priority_level', 'is_active']);
+        $filters = $request->only(['municipio_id', 'bairro_id', 'territorial_unit_id', 'risk_type', 'priority_level', 'is_active']);
 
         $areas = $this->repository->paginateByFilters(
             tenantId: $tenantId,
@@ -43,13 +45,38 @@ class RiskAreaController extends Controller
 
         $territorialUnits = TerritorialUnit::query()
             ->where('tenant_id', $tenantId)
+            ->when(
+                $filters['municipio_id'] ?? null,
+                fn ($query, int|string $value) => $query->where('municipio_id', (int) $value),
+            )
+            ->when(
+                $filters['bairro_id'] ?? null,
+                fn ($query, int|string $value) => $query->where('bairro_id', (int) $value),
+            )
             ->orderBy('name')
             ->get(['id', 'name']);
+
+        $municipios = Municipio::query()
+            ->where('ativo', true)
+            ->orderBy('uf')
+            ->orderBy('nome')
+            ->get(['id', 'nome', 'uf']);
+
+        $selectedMunicipioId = (int) ($filters['municipio_id'] ?? 0);
+        $bairros = $selectedMunicipioId > 0
+            ? Bairro::query()
+                ->where('municipio_id', $selectedMunicipioId)
+                ->where('ativo', true)
+                ->orderBy('nome')
+                ->get(['id', 'nome'])
+            : collect();
 
         return view('risk.areas.index', [
             'areas' => $areas,
             'filters' => $filters,
             'territorialUnits' => $territorialUnits,
+            'municipios' => $municipios,
+            'bairros' => $bairros,
             'riskTypes' => RiskArea::RISK_TYPES,
             'priorityLevels' => RiskArea::PRIORITY_LEVELS,
             'editingArea' => null,
@@ -87,7 +114,7 @@ class RiskAreaController extends Controller
         $this->authorize('update', $risk_area);
 
         $tenantId = $this->resolveTenantIdOrAbort();
-        $filters = $request->only(['territorial_unit_id', 'risk_type', 'priority_level', 'is_active']);
+        $filters = $request->only(['municipio_id', 'bairro_id', 'territorial_unit_id', 'risk_type', 'priority_level', 'is_active']);
 
         $areas = $this->repository->paginateByFilters(
             tenantId: $tenantId,
@@ -97,13 +124,38 @@ class RiskAreaController extends Controller
 
         $territorialUnits = TerritorialUnit::query()
             ->where('tenant_id', $tenantId)
+            ->when(
+                $filters['municipio_id'] ?? null,
+                fn ($query, int|string $value) => $query->where('municipio_id', (int) $value),
+            )
+            ->when(
+                $filters['bairro_id'] ?? null,
+                fn ($query, int|string $value) => $query->where('bairro_id', (int) $value),
+            )
             ->orderBy('name')
             ->get(['id', 'name']);
+
+        $municipios = Municipio::query()
+            ->where('ativo', true)
+            ->orderBy('uf')
+            ->orderBy('nome')
+            ->get(['id', 'nome', 'uf']);
+
+        $selectedMunicipioId = (int) ($filters['municipio_id'] ?? $risk_area->territorialUnit?->municipio_id ?? 0);
+        $bairros = $selectedMunicipioId > 0
+            ? Bairro::query()
+                ->where('municipio_id', $selectedMunicipioId)
+                ->where('ativo', true)
+                ->orderBy('nome')
+                ->get(['id', 'nome'])
+            : collect();
 
         return view('risk.areas.index', [
             'areas' => $areas,
             'filters' => $filters,
             'territorialUnits' => $territorialUnits,
+            'municipios' => $municipios,
+            'bairros' => $bairros,
             'riskTypes' => RiskArea::RISK_TYPES,
             'priorityLevels' => RiskArea::PRIORITY_LEVELS,
             'editingArea' => $risk_area,

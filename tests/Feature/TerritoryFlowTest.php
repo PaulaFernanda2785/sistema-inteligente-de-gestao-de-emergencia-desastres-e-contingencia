@@ -6,6 +6,7 @@ use App\Modules\Admin\Models\Organization;
 use App\Modules\Admin\Models\Permission;
 use App\Modules\Admin\Models\Role;
 use App\Modules\Admin\Models\User;
+use App\Modules\Territory\Models\Municipio;
 use App\Modules\Tenancy\Models\Tenant;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
@@ -82,8 +83,16 @@ class TerritoryFlowTest extends TestCase
         $territoryCreate->assertCreated();
         $territoryId = (int) $territoryCreate->json('data.id');
 
+        $municipio = Municipio::query()->create([
+            'nome' => 'Fortaleza',
+            'codigo_ibge' => '2304400',
+            'uf' => 'CE',
+            'ativo' => true,
+        ]);
+
         $rootUnitCreate = $this->postJson(route('territory.units.store'), [
             'territory_id' => $territoryId,
+            'municipio_id' => $municipio->id,
             'name' => 'Regional 1',
             'unit_type' => 'REGIONAL',
             'population_estimate' => 1000,
@@ -94,6 +103,7 @@ class TerritoryFlowTest extends TestCase
 
         $childUnitCreate = $this->postJson(route('territory.units.store'), [
             'territory_id' => $territoryId,
+            'municipio_id' => $municipio->id,
             'parent_unit_id' => $rootUnitId,
             'name' => 'Bairro Centro',
             'unit_type' => 'BAIRRO',
@@ -104,6 +114,7 @@ class TerritoryFlowTest extends TestCase
 
         $cycleAttempt = $this->putJson(route('territory.units.update', ['unit' => $rootUnitId]), [
             'territory_id' => $territoryId,
+            'municipio_id' => $municipio->id,
             'parent_unit_id' => $childUnitId,
             'name' => 'Regional 1',
             'unit_type' => 'REGIONAL',

@@ -291,12 +291,16 @@
     /** @var \App\Modules\Admin\Models\User|null $authUser */
     $authUser = auth()->user();
     $canUsers = $authUser?->hasPermission('users.view') ?? false;
-    $canTerritories = ($authUser?->hasPermission('territories.view') ?? false) || ($authUser?->hasPermission('territorial_units.view') ?? false);
+    $canTerritories = ($authUser?->hasPermission('territories.view') ?? false)
+        || ($authUser?->hasPermission('territorial_units.view') ?? false)
+        || ($authUser?->hasPermission('bairros.view') ?? false);
     $canRiskAreas = $authUser?->hasPermission('risk_areas.view') ?? false;
     $canShelters = $authUser?->hasPermission('shelters.view') ?? false;
     $territoryRoute = ($authUser?->hasPermission('territories.view') ?? false)
         ? route('territory.territories.index')
-        : route('territory.units.index');
+        : (($authUser?->hasPermission('territorial_units.view') ?? false)
+            ? route('territory.units.index')
+            : route('territory.bairros.index'));
 @endphp
 
 <header class="app-header">

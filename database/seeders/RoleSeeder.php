@@ -41,6 +41,9 @@ class RoleSeeder extends Seeder
             'territorial_units.view',
             'territorial_units.create',
             'territorial_units.update',
+            'bairros.view',
+            'bairros.create',
+            'bairros.update',
             'risk_areas.view',
             'risk_areas.create',
             'risk_areas.update',
@@ -58,6 +61,7 @@ class RoleSeeder extends Seeder
             'organizations.view',
             'territories.view',
             'territorial_units.view',
+            'bairros.view',
             'risk_areas.view',
             'shelters.view',
         ];

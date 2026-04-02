@@ -10,11 +10,19 @@ class TerritorialUnitRepository
     public function paginateByFilters(int $tenantId, array $filters = [], int $perPage = 15): LengthAwarePaginator
     {
         return TerritorialUnit::query()
-            ->with(['territory:id,name', 'parent:id,name'])
+            ->with(['territory:id,name', 'parent:id,name', 'municipio:id,nome,uf', 'bairro:id,nome'])
             ->where('tenant_id', $tenantId)
             ->when(
                 $filters['territory_id'] ?? null,
                 fn ($query, int|string $value) => $query->where('territory_id', (int) $value),
+            )
+            ->when(
+                $filters['municipio_id'] ?? null,
+                fn ($query, int|string $value) => $query->where('municipio_id', (int) $value),
+            )
+            ->when(
+                $filters['bairro_id'] ?? null,
+                fn ($query, int|string $value) => $query->where('bairro_id', (int) $value),
             )
             ->when(
                 $filters['name'] ?? null,
@@ -24,6 +32,8 @@ class TerritorialUnitRepository
                 $filters['unit_type'] ?? null,
                 fn ($query, string $value) => $query->where('unit_type', $value),
             )
+            ->orderBy('municipio_id')
+            ->orderBy('bairro_id')
             ->orderBy('territory_id')
             ->orderBy('parent_unit_id')
             ->orderBy('name')

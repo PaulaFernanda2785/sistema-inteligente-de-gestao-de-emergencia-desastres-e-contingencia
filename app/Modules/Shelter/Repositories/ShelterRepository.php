@@ -10,8 +10,22 @@ class ShelterRepository
     public function paginateByFilters(int $tenantId, array $filters = [], int $perPage = 15): LengthAwarePaginator
     {
         return Shelter::query()
-            ->with(['territorialUnit:id,name'])
+            ->with(['territorialUnit:id,name,municipio_id,bairro_id'])
             ->where('tenant_id', $tenantId)
+            ->when(
+                $filters['municipio_id'] ?? null,
+                fn ($query, int|string $value) => $query->whereHas(
+                    'territorialUnit',
+                    fn ($unitQuery) => $unitQuery->where('municipio_id', (int) $value),
+                ),
+            )
+            ->when(
+                $filters['bairro_id'] ?? null,
+                fn ($query, int|string $value) => $query->whereHas(
+                    'territorialUnit',
+                    fn ($unitQuery) => $unitQuery->where('bairro_id', (int) $value),
+                ),
+            )
             ->when(
                 $filters['territorial_unit_id'] ?? null,
                 fn ($query, int|string $value) => $query->where('territorial_unit_id', (int) $value),

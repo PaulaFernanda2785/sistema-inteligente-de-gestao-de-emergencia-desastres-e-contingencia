@@ -4,6 +4,8 @@ namespace App\Modules\Territory\Controllers;
 
 use App\Core\Support\TenantContext;
 use App\Http\Controllers\Controller;
+use App\Modules\Territory\Models\Bairro;
+use App\Modules\Territory\Models\Municipio;
 use App\Modules\Territory\Models\TerritorialUnit;
 use App\Modules\Territory\Models\Territory;
 use App\Modules\Territory\Repositories\TerritorialUnitRepository;
@@ -29,7 +31,7 @@ class TerritorialUnitController extends Controller
         $this->authorize('viewAny', TerritorialUnit::class);
 
         $tenantId = $this->resolveTenantIdOrAbort();
-        $filters = $request->only(['territory_id', 'name', 'unit_type']);
+        $filters = $request->only(['territory_id', 'municipio_id', 'bairro_id', 'name', 'unit_type']);
 
         $units = $this->repository->paginateByFilters(
             tenantId: $tenantId,
@@ -46,10 +48,27 @@ class TerritorialUnitController extends Controller
             ->orderBy('name')
             ->get(['id', 'name']);
 
+        $municipios = Municipio::query()
+            ->where('ativo', true)
+            ->orderBy('uf')
+            ->orderBy('nome')
+            ->get(['id', 'nome', 'uf']);
+
+        $selectedMunicipioId = (int) ($filters['municipio_id'] ?? 0);
+        $bairros = $selectedMunicipioId > 0
+            ? Bairro::query()
+                ->where('municipio_id', $selectedMunicipioId)
+                ->where('ativo', true)
+                ->orderBy('nome')
+                ->get(['id', 'nome'])
+            : collect();
+
         return view('territory.units.index', [
             'units' => $units,
             'filters' => $filters,
             'territories' => $territories,
+            'municipios' => $municipios,
+            'bairros' => $bairros,
             'editingUnit' => null,
         ]);
     }
@@ -85,7 +104,7 @@ class TerritorialUnitController extends Controller
         $this->authorize('update', $unit);
 
         $tenantId = $this->resolveTenantIdOrAbort();
-        $filters = $request->only(['territory_id', 'name', 'unit_type']);
+        $filters = $request->only(['territory_id', 'municipio_id', 'bairro_id', 'name', 'unit_type']);
 
         $units = $this->repository->paginateByFilters(
             tenantId: $tenantId,
@@ -98,10 +117,27 @@ class TerritorialUnitController extends Controller
             ->orderBy('name')
             ->get(['id', 'name']);
 
+        $municipios = Municipio::query()
+            ->where('ativo', true)
+            ->orderBy('uf')
+            ->orderBy('nome')
+            ->get(['id', 'nome', 'uf']);
+
+        $selectedMunicipioId = (int) ($filters['municipio_id'] ?? $unit->municipio_id ?? 0);
+        $bairros = $selectedMunicipioId > 0
+            ? Bairro::query()
+                ->where('municipio_id', $selectedMunicipioId)
+                ->where('ativo', true)
+                ->orderBy('nome')
+                ->get(['id', 'nome'])
+            : collect();
+
         return view('territory.units.index', [
             'units' => $units,
             'filters' => $filters,
             'territories' => $territories,
+            'municipios' => $municipios,
+            'bairros' => $bairros,
             'editingUnit' => $unit,
         ]);
     }

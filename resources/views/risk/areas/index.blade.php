@@ -6,6 +6,7 @@
 @section('page_actions')
     <a class="btn btn-soft" href="{{ route('territory.territories.index') }}">Territorios</a>
     <a class="btn btn-soft" href="{{ route('territory.units.index') }}">Unidades</a>
+    <a class="btn btn-soft" href="{{ route('territory.bairros.index') }}">Bairros</a>
 @endsection
 
 @section('content')
@@ -20,6 +21,28 @@
     <section class="card">
         <div class="card-body">
             <form method="get" action="{{ route('risk.areas.index') }}" class="grid">
+                <div class="field">
+                    <label for="municipio_id">Municipio</label>
+                    <select id="municipio_id" name="municipio_id">
+                        <option value="">Todos</option>
+                        @foreach ($municipios as $municipio)
+                            <option value="{{ $municipio->id }}" @selected((string) ($filters['municipio_id'] ?? '') === (string) $municipio->id)>
+                                {{ $municipio->nome }} ({{ $municipio->uf }})
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="field">
+                    <label for="bairro_id">Bairro</label>
+                    <select id="bairro_id" name="bairro_id">
+                        <option value="">Todos</option>
+                        @foreach ($bairros as $bairro)
+                            <option value="{{ $bairro->id }}" @selected((string) ($filters['bairro_id'] ?? '') === (string) $bairro->id)>
+                                {{ $bairro->nome }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
                 <div class="field">
                     <label for="territorial_unit_id">Unidade territorial</label>
                     <select id="territorial_unit_id" name="territorial_unit_id">

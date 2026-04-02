@@ -5,6 +5,7 @@
 
 @section('page_actions')
     <a class="btn btn-soft" href="{{ route('territory.territories.index') }}">Territorios</a>
+    <a class="btn btn-soft" href="{{ route('territory.bairros.index') }}">Bairros</a>
 @endsection
 
 @section('content')
@@ -26,6 +27,28 @@
                         @foreach ($territories as $territory)
                             <option value="{{ $territory->id }}" @selected((string) ($filters['territory_id'] ?? '') === (string) $territory->id)>
                                 {{ $territory->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="field">
+                    <label for="municipio_id">Municipio</label>
+                    <select id="municipio_id" name="municipio_id">
+                        <option value="">Todos</option>
+                        @foreach ($municipios as $municipio)
+                            <option value="{{ $municipio->id }}" @selected((string) ($filters['municipio_id'] ?? '') === (string) $municipio->id)>
+                                {{ $municipio->nome }} ({{ $municipio->uf }})
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="field">
+                    <label for="bairro_id">Bairro</label>
+                    <select id="bairro_id" name="bairro_id">
+                        <option value="">Todos</option>
+                        @foreach ($bairros as $bairro)
+                            <option value="{{ $bairro->id }}" @selected((string) ($filters['bairro_id'] ?? '') === (string) $bairro->id)>
+                                {{ $bairro->nome }}
                             </option>
                         @endforeach
                     </select>
@@ -61,6 +84,26 @@
                             <option value="{{ $territory->id }}" @selected((string) ($filters['territory_id'] ?? '') === (string) $territory->id)>
                                 {{ $territory->name }}
                             </option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="field">
+                    <label for="new_municipio_id">Municipio</label>
+                    <select id="new_municipio_id" name="municipio_id" required>
+                        <option value="">Selecione</option>
+                        @foreach ($municipios as $municipio)
+                            <option value="{{ $municipio->id }}" @selected((string) ($filters['municipio_id'] ?? '') === (string) $municipio->id)>
+                                {{ $municipio->nome }} ({{ $municipio->uf }})
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="field">
+                    <label for="new_bairro_id">Bairro</label>
+                    <select id="new_bairro_id" name="bairro_id">
+                        <option value="">Sem bairro</option>
+                        @foreach ($bairros as $bairro)
+                            <option value="{{ $bairro->id }}">{{ $bairro->nome }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -112,6 +155,26 @@
                         </select>
                     </div>
                     <div class="field">
+                        <label for="edit_municipio_id">Municipio</label>
+                        <select id="edit_municipio_id" name="municipio_id" required>
+                            <option value="">Selecione</option>
+                            @foreach ($municipios as $municipio)
+                                <option value="{{ $municipio->id }}" @selected((int) $editingUnit->municipio_id === (int) $municipio->id)>
+                                    {{ $municipio->nome }} ({{ $municipio->uf }})
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label for="edit_bairro_id">Bairro</label>
+                        <select id="edit_bairro_id" name="bairro_id">
+                            <option value="">Sem bairro</option>
+                            @foreach ($bairros as $bairro)
+                                <option value="{{ $bairro->id }}" @selected((int) $editingUnit->bairro_id === (int) $bairro->id)>{{ $bairro->nome }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="field">
                         <label for="edit_parent_unit_id">Unidade pai</label>
                         <input id="edit_parent_unit_id" type="number" name="parent_unit_id" min="1" value="{{ $editingUnit->parent_unit_id }}">
                     </div>
@@ -147,6 +210,8 @@
                     <th>ID</th>
                     <th>Nome</th>
                     <th>Territorio</th>
+                    <th>Municipio</th>
+                    <th>Bairro</th>
                     <th>Tipo</th>
                     <th>Pai</th>
                     <th>Codigo</th>
@@ -160,6 +225,13 @@
                         <td>{{ $unit->id }}</td>
                         <td>{{ $unit->name }}</td>
                         <td>{{ $unit->territory?->name ?? '-' }}</td>
+                        <td>
+                            {{ $unit->municipio?->nome ?? '-' }}
+                            @if ($unit->municipio?->uf)
+                                ({{ $unit->municipio->uf }})
+                            @endif
+                        </td>
+                        <td>{{ $unit->bairro?->nome ?? '-' }}</td>
                         <td>{{ $unit->unit_type }}</td>
                         <td>{{ $unit->parent?->name ?? '-' }}</td>
                         <td>{{ $unit->code ?: '-' }}</td>
@@ -170,7 +242,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="8">Nenhuma unidade territorial encontrada.</td>
+                        <td colspan="10">Nenhuma unidade territorial encontrada.</td>
                     </tr>
                 @endforelse
                 </tbody>

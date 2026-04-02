@@ -3,6 +3,8 @@
 namespace App\Modules\Territory\Services;
 
 use App\Core\Services\BaseService;
+use App\Modules\Territory\Models\Bairro;
+use App\Modules\Territory\Models\Municipio;
 use App\Modules\Territory\Models\TerritorialUnit;
 use App\Modules\Territory\Models\Territory;
 use Illuminate\Auth\Access\AuthorizationException;
@@ -71,6 +73,8 @@ class TerritoryService extends BaseService
         return DB::transaction(function () use ($data): TerritorialUnit {
             $tenantId = $this->tenantIdOrFail();
             $territory = $this->resolveTenantTerritory($tenantId, (int) $data['territory_id']);
+            $municipio = $this->resolveMunicipio((int) $data['municipio_id']);
+            $bairro = $this->resolveBairroFromMunicipio($municipio->id, $data['bairro_id'] ?? null);
 
             $parentId = isset($data['parent_unit_id']) ? (int) $data['parent_unit_id'] : null;
             if ($parentId !== null) {
@@ -85,6 +89,8 @@ class TerritoryService extends BaseService
             $unit = TerritorialUnit::query()->create([
                 'tenant_id' => $tenantId,
                 'territory_id' => $territory->id,
+                'municipio_id' => $municipio->id,
+                'bairro_id' => $bairro?->id,
                 'parent_unit_id' => $parentId,
                 'name' => $data['name'],
                 'unit_type' => $data['unit_type'],
@@ -100,7 +106,7 @@ class TerritoryService extends BaseService
                 newValues: $unit->toArray(),
             );
 
-            return $unit->fresh(['territory:id,name', 'parent:id,name']);
+            return $unit->fresh(['territory:id,name', 'municipio:id,nome,uf', 'bairro:id,nome', 'parent:id,name']);
         });
     }
 
@@ -111,6 +117,8 @@ class TerritoryService extends BaseService
             $this->assertSameTenant($unit->tenant_id, $tenantId);
 
             $territory = $this->resolveTenantTerritory($tenantId, (int) $data['territory_id']);
+            $municipio = $this->resolveMunicipio((int) $data['municipio_id']);
+            $bairro = $this->resolveBairroFromMunicipio($municipio->id, $data['bairro_id'] ?? null);
             $parentId = isset($data['parent_unit_id']) ? (int) $data['parent_unit_id'] : null;
 
             if ($parentId !== null) {
@@ -126,6 +134,8 @@ class TerritoryService extends BaseService
 
             $unit->update([
                 'territory_id' => $territory->id,
+                'municipio_id' => $municipio->id,
+                'bairro_id' => $bairro?->id,
                 'parent_unit_id' => $parentId,
                 'name' => $data['name'],
                 'unit_type' => $data['unit_type'],
@@ -142,7 +152,7 @@ class TerritoryService extends BaseService
                 newValues: $unit->fresh()->toArray(),
             );
 
-            return $unit->fresh(['territory:id,name', 'parent:id,name']);
+            return $unit->fresh(['territory:id,name', 'municipio:id,nome,uf', 'bairro:id,nome', 'parent:id,name']);
         });
     }
 
@@ -151,6 +161,33 @@ class TerritoryService extends BaseService
         return Territory::query()
             ->where('tenant_id', $tenantId)
             ->findOrFail($territoryId);
+    }
+
+    private function resolveMunicipio(int $municipioId): Municipio
+    {
+        return Municipio::query()
+            ->where('ativo', true)
+            ->findOrFail($municipioId);
+    }
+
+    private function resolveBairroFromMunicipio(int $municipioId, mixed $bairroId): ?Bairro
+    {
+        if ($bairroId === null || $bairroId === '') {
+            return null;
+        }
+
+        $bairro = Bairro::query()
+            ->where('ativo', true)
+            ->where('municipio_id', $municipioId)
+            ->find((int) $bairroId);
+
+        if ($bairro === null) {
+            throw ValidationException::withMessages([
+                'bairro_id' => 'O bairro informado nao pertence ao municipio selecionado.',
+            ]);
+        }
+
+        return $bairro;
     }
 
     private function resolveValidParent(

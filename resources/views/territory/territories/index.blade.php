@@ -5,6 +5,7 @@
 
 @section('page_actions')
     <a class="btn btn-soft" href="{{ route('territory.units.index') }}">Unidades territoriais</a>
+    <a class="btn btn-soft" href="{{ route('territory.bairros.index') }}">Bairros</a>
 @endsection
 
 @section('content')

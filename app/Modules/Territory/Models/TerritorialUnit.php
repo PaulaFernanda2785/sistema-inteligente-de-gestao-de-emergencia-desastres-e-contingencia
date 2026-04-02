@@ -17,6 +17,8 @@ class TerritorialUnit extends Model
     protected $fillable = [
         'tenant_id',
         'territory_id',
+        'municipio_id',
+        'bairro_id',
         'parent_unit_id',
         'name',
         'unit_type',
@@ -25,6 +27,8 @@ class TerritorialUnit extends Model
     ];
 
     protected $casts = [
+        'municipio_id' => 'integer',
+        'bairro_id' => 'integer',
         'population_estimate' => 'integer',
     ];
 
@@ -36,6 +40,16 @@ class TerritorialUnit extends Model
     public function territory(): BelongsTo
     {
         return $this->belongsTo(Territory::class);
+    }
+
+    public function municipio(): BelongsTo
+    {
+        return $this->belongsTo(Municipio::class, 'municipio_id');
+    }
+
+    public function bairro(): BelongsTo
+    {
+        return $this->belongsTo(Bairro::class, 'bairro_id');
     }
 
     public function parent(): BelongsTo
